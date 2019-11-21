@@ -26,6 +26,7 @@ enum FieldRename {
 /// An annotation used to specify a class to generate code for.
 @JsonSerializable(
   checked: true,
+  Blah: "asd",
   disallowUnrecognizedKeys: true,
   fieldRename: FieldRename.snake,
 )
