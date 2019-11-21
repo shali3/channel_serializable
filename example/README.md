@@ -1,19 +1,19 @@
 *This example assumes you're using a recent version of the Dart or Flutter SDK.*
 
-To use [package:json_serializable][json_serializable] in your package, add these
+To use [package:channel_serializable][channel_serializable] in your package, add these
 dependencies to your `pubspec.yaml`.
 
 ```yaml
 dependencies:
-  json_annotation: ^3.0.0
+  channel_annotation: ^0.0.1
 
 dev_dependencies:
   build_runner: ^1.0.0
-  json_serializable: ^3.2.0
+  channel_serializable: ^0.0.1
 ```
 
 Annotate your code with classes defined in
-[package:json_annotation][json_annotation].
+[package:channel_annotation][channel_annotation].
 
 * See [`lib/example.dart`][example] for an example of a file using these
   annotations.
@@ -36,5 +36,5 @@ Run `pub run build_runner build` to generate files into your source directory.
 
 [example]: lib/example.dart
 [example_g]: lib/example.g.dart
-[json_annotation]: https://pub.dev/packages/json_annotation
-[json_serializable]: https://pub.dev/packages/json_serializable
+[channel_annotation]: https://pub.dev/packages/channel_annotation
+[channel_serializable]: https://pub.dev/packages/channel_serializable

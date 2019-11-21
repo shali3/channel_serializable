@@ -1,0 +1,9 @@
+name: channel_annotation
+version: 0.0.1
+description: >-
+  Classes and helper functions that support ChannelMethod code generation via the
+  `channel_serializable` package.
+homepage: https://github.com/dart-lang/channel_serializable
+author: Dart Team <misc@dartlang.org>
+environment:
+  sdk: '>=2.3.0 <3.0.0'

@@ -1,0 +1,110 @@
+// Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+@TestOn('vm')
+import 'package:channel_serializable/channel_serializable.dart';
+import 'package:path/path.dart' as p;
+import 'package:source_gen_test/source_gen_test.dart';
+import 'package:test/test.dart';
+
+void main() async {
+  initializeBuildLogTracking();
+  final reader = await initializeLibraryReaderForDirectory(
+    p.join('test', 'src'),
+    '_channel_serializable_test_input.dart',
+  );
+
+  testAnnotatedElements(
+    reader,
+    const ChannelSerializableGenerator(),
+    expectedAnnotatedTests: _expectedAnnotatedTests,
+  );
+}
+
+const _expectedAnnotatedTests = [
+  'annotatedMethod',
+  'BadFromFuncReturnType',
+  'BadNoArgs',
+  'BadOneNamed',
+  'BadToFuncReturnType',
+  'BadTwoRequiredPositional',
+  'DefaultWithConstObject',
+  'DefaultWithDisallowNullRequiredClass',
+  'DefaultWithFunction',
+  'DefaultWithNestedEnum',
+  'DefaultWithNonNullableClass',
+  'DefaultWithNonNullableField',
+  'DefaultWithSymbol',
+  'DefaultWithToJsonClass',
+  'DefaultWithType',
+  'DupeKeys',
+  'DynamicConvertMethods',
+  'FieldNamerKebab',
+  'FieldNamerNone',
+  'FieldNamerPascal',
+  'FieldNamerSnake',
+  'FieldWithFromJsonCtorAndTypeParams',
+  'FinalFields',
+  'FinalFieldsNotSetInCtor',
+  'FromDynamicCollection',
+  'GeneralTestClass1',
+  'GeneralTestClass2',
+  'GenericClass',
+  'IgnoredFieldClass',
+  'IgnoredFieldCtorClass',
+  'IgnoreUnannotated',
+  'IncludeIfNullDisallowNullClass',
+  'IncludeIfNullOverride',
+  'InvalidFromFunc2Args',
+  'InvalidToFunc2Args',
+  'JsonConverterCtorParams',
+  'JsonConverterDuplicateAnnotations',
+  'JsonConverterNamedCtor',
+  'JsonConverterOnGetter',
+  'JsonConverterWithBadTypeArg',
+  'JsonConvertOnField',
+  'JsonValueValid',
+  'JsonValueWithBool',
+  'JustSetter',
+  'JustSetterNoFromJson',
+  'JustSetterNoToJson',
+  'KeyDupesField',
+  'MapKeyVariety',
+  'NoCtorClass',
+  'NoDeserializeBadKey',
+  'NoDeserializeFieldType',
+  'NoSerializeBadKey',
+  'NoSerializeFieldType',
+  'ObjectConvertMethods',
+  'OkayOneNormalOptionalNamed',
+  'OkayOneNormalOptionalPositional',
+  'OkayOnlyOptionalPositional',
+  'OnlyStaticMembers',
+  'PrivateFieldCtorClass',
+  'PropInMixinI448Regression',
+  'SetSupport',
+  'SubType',
+  'SubTypeWithAnnotatedFieldOverrideExtends',
+  'SubTypeWithAnnotatedFieldOverrideExtendsWithOverrides',
+  'SubTypeWithAnnotatedFieldOverrideImplements',
+  'theAnswer',
+  'ToJsonNullableFalseIncludeIfNullFalse',
+  'TypedConvertMethods',
+  'UnknownCtorParamType',
+  'UnknownEnumValue',
+  'UnknownEnumValueNotEnumValue',
+  'UnknownEnumValueNotEnumField',
+  'UnknownFieldType',
+  'UnknownFieldTypeToJsonOnly',
+  'UnknownFieldTypeWithConvert',
+  'UnsupportedDateTimeField',
+  'UnsupportedDurationField',
+  'UnsupportedListField',
+  'UnsupportedMapField',
+  'UnsupportedSetField',
+  'UnsupportedUriField',
+  'ValidToFromFuncClassStatic',
+  'WithANonCtorGetter',
+  'WithANonCtorGetterChecked',
+];

@@ -3,111 +3,71 @@
 part of 'example.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
+// ChannelSerializableGenerator
 // **************************************************************************
 
-Person _$PersonFromJson(Map<String, dynamic> json) {
+Person _$PersonFromMap(Map<String, dynamic> map) {
   return Person(
-    json['firstName'] as String,
-    json['lastName'] as String,
-    DateTime.parse(json['date-of-birth'] as String),
-    middleName: json['middleName'] as String,
-    lastOrder: json['last-order'] == null
+    map['firstName'] as String,
+    map['lastName'] as String,
+    map['dateOfBirth'] == null
         ? null
-        : DateTime.parse(json['last-order'] as String),
-    orders: (json['orders'] as List)
-        .map((e) => Order.fromJson(e as Map<String, dynamic>))
-        .toList(),
+        : DateTime.fromMicrosecondsSinceEpoch(map['dateOfBirth'] as int),
+    middleName: map['middleName'] as String,
+    lastOrder: map['lastOrder'] == null
+        ? null
+        : DateTime.fromMicrosecondsSinceEpoch(map['lastOrder'] as int),
+    orders: (map['orders'] as List)
+        ?.map(
+            (e) => e == null ? null : Order.fromMap(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
-Map<String, dynamic> _$PersonToJson(Person instance) {
-  final val = <String, dynamic>{
-    'firstName': instance.firstName,
-  };
+Map<String, dynamic> _$PersonToMap(Person instance) => <String, dynamic>{
+      'firstName': instance.firstName,
+      'middleName': instance.middleName,
+      'lastName': instance.lastName,
+      'dateOfBirth': instance.dateOfBirth?.microsecondsSinceEpoch,
+      'lastOrder': instance.lastOrder?.microsecondsSinceEpoch,
+      'orders': instance.orders?.map((e) => e.toMap())?.toList(),
+    };
 
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('middleName', instance.middleName);
-  val['lastName'] = instance.lastName;
-  val['date-of-birth'] = instance.dateOfBirth.toIso8601String();
-  val['last-order'] = instance.lastOrder?.toIso8601String();
-  val['orders'] = instance.orders;
-  return val;
-}
-
-Order _$OrderFromJson(Map<String, dynamic> json) {
+Order _$OrderFromMap(Map<String, dynamic> map) {
   return Order(
-    Order._dateTimeFromEpochUs(json['date'] as int),
-  )
-    ..count = json['count'] as int
-    ..itemNumber = json['itemNumber'] as int
-    ..isRushed = json['isRushed'] as bool
-    ..item = json['item'] == null
+    map['date'] == null
         ? null
-        : Item.fromJson(json['item'] as Map<String, dynamic>)
-    ..prepTime = Order._durationFromMilliseconds(json['prep-time'] as int);
+        : DateTime.fromMicrosecondsSinceEpoch(map['date'] as int),
+  )
+    ..count = map['count'] as int
+    ..itemNumber = map['itemNumber'] as int
+    ..isRushed = map['isRushed'] as bool
+    ..item = map['item'] == null
+        ? null
+        : Item.fromMap(map['item'] as Map<String, dynamic>)
+    ..prepTime = map['prepTime'] == null
+        ? null
+        : Duration(microseconds: map['prepTime'] as int);
 }
 
-Map<String, dynamic> _$OrderToJson(Order instance) {
-  final val = <String, dynamic>{};
+Map<String, dynamic> _$OrderToMap(Order instance) => <String, dynamic>{
+      'count': instance.count,
+      'itemNumber': instance.itemNumber,
+      'isRushed': instance.isRushed,
+      'item': instance.item.toMap(),
+      'prepTime': instance.prepTime?.inMicroseconds,
+      'date': instance.date?.microsecondsSinceEpoch,
+    };
 
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('count', instance.count);
-  writeNotNull('itemNumber', instance.itemNumber);
-  writeNotNull('isRushed', instance.isRushed);
-  writeNotNull('item', instance.item);
-  writeNotNull('prep-time', Order._durationToMilliseconds(instance.prepTime));
-  writeNotNull('date', Order._dateTimeToEpochUs(instance.date));
-  return val;
-}
-
-Item _$ItemFromJson(Map<String, dynamic> json) {
+Item _$ItemFromMap(Map<String, dynamic> map) {
   return Item()
-    ..count = json['count'] as int
-    ..itemNumber = json['itemNumber'] as int
-    ..isRushed = json['isRushed'] as bool;
+    ..count = map['count'] as int
+    ..itemNumber = map['itemNumber'] as int
+    ..isRushed = map['isRushed'] as bool;
 }
 
-Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemToMap(Item instance) => <String, dynamic>{
       'count': instance.count,
       'itemNumber': instance.itemNumber,
       'isRushed': instance.isRushed,
     };
-
-// **************************************************************************
-// JsonLiteralGenerator
-// **************************************************************************
-
-final _$glossaryDataJsonLiteral = {
-  'glossary': {
-    'title': 'example glossary',
-    'GlossDiv': {
-      'title': 'S',
-      'GlossList': {
-        'GlossEntry': {
-          'ID': 'SGML',
-          'SortAs': 'SGML',
-          'GlossTerm': 'Standard Generalized Markup Language',
-          'Acronym': 'SGML',
-          'Abbrev': 'ISO 8879:1986',
-          'GlossDef': {
-            'para':
-                'A meta-markup language, used to create markup languages such as DocBook.',
-            'GlossSeeAlso': ['GML', 'XML']
-          },
-          'GlossSee': 'markup'
-        }
-      }
-    }
-  }
-};
