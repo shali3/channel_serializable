@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:build/src/builder/build_step.dart';
 import 'package:channel_annotation/channel_annotation.dart';
@@ -11,8 +12,13 @@ import '../field_helpers.dart';
 import '../helper_core.dart';
 import '../utils.dart';
 
-const String kClassPrefix = 'TST'; //TODO: move to config
-final _channelSerializableChecker = const TypeChecker.fromRuntime(ChannelSerializable);
+const String kClassPrefix = 'CNL'; //TODO: move to config
+final _channelSerializableChecker =
+    const TypeChecker.fromRuntime(ChannelSerializable);
+
+final _dateTimeChecker = const TypeChecker.fromRuntime(DateTime);
+
+final _durationChecker = const TypeChecker.fromRuntime(Duration);
 
 class ObjCGenerator extends GeneratorForAnnotation<ChannelSerializable> {
   @override
@@ -78,23 +84,23 @@ class _GeneratorHelper extends HelperCore with EncodeHelper, DecodeHelper {
       return map;
     });
 
-    var accessibleFieldSet = accessibleFields.values.toSet();
-//    if (config.createFactory) {
-//      final createResult = createFactory(accessibleFields, unavailableReasons);
-//      yield createResult.output;
-//
-//      accessibleFieldSet = accessibleFields.entries
-//          .where((e) => createResult.usedFields.contains(e.key))
-//          .map((e) => e.value)
-//          .toSet();
-//    }
+    final accessibleFieldSet = accessibleFields.values.toSet();
 
     final buffer = StringBuffer();
 
-    buffer.writeln('@interface $kClassPrefix${element.name} : NSObject');
+    buffer.writeln('''
+@interface ${_getSerializableClassName(element)} : NSObject
+
+- (instancetype) initWithChannelDict:(NSDictionary *)dict;
+- (NSDictionary *) toChannelDict;
+    ''');
 
     buffer.writeAll(accessibleFieldSet.map((field) {
-      return '    @property(nonatomic) ${_getObjCType(field)} ${field.name};\n';
+      var objCType = _getObjCType(field.type, field: field);
+      if (objCType.substring(objCType.length - 1) != '*') {
+        objCType += ' ';
+      }
+      return '@property(nonatomic) $objCType${field.name};\n';
     }));
 
     buffer.writeln('@end');
@@ -104,12 +110,51 @@ class _GeneratorHelper extends HelperCore with EncodeHelper, DecodeHelper {
     yield* _addedMembers;
   }
 
-  String _getObjCType(FieldElement field) {
-    if (field.type.isDartCoreString) {
+  String _getObjCType(DartType dartType,
+      {Element field, bool allowValueTypes = true}) {
+    if (dartType.isDartCoreString) {
       return 'NSString *';
+    } else if (_dateTimeChecker.isExactlyType(dartType)) {
+      return 'NSDate *';
+    } else if (_durationChecker.isExactlyType(dartType)) {
+      return allowValueTypes ? 'NSTimeInterval' : 'NSNumber *';
+    } else if (dartType.isDartCoreInt) {
+      return allowValueTypes ? 'long' : 'NSNumber *';
+    } else if (dartType.isDartCoreBool) {
+      return allowValueTypes ? 'bool' : 'NSNumber *';
+    } else if (dartType.isDartCoreDouble) {
+      return allowValueTypes ? 'double' : 'NSNumber *';
+    } else if (dartType.isDartCoreSet) {
+      final listElementsType = _getObjCType(
+          (dartType as ParameterizedType).typeArguments[0],
+          field: field,
+          allowValueTypes: false);
+      return 'NSSet<$listElementsType> *';
+    } else if (dartType.isDartCoreList) {
+      final listElementsType = _getObjCType(
+          (dartType as ParameterizedType).typeArguments[0],
+          field: field,
+          allowValueTypes: false);
+      return 'NSArray<$listElementsType> *';
+    } else if (dartType.isDartCoreMap) {
+      final arguments = (dartType as ParameterizedType).typeArguments;
+      final keyType =
+          _getObjCType(arguments[0], field: field, allowValueTypes: false);
+      final valueType =
+          _getObjCType(arguments[1], field: field, allowValueTypes: false);
+      return 'NSDictionary<$keyType,$valueType> *';
+    } else if (_channelSerializableChecker
+        .annotationsOf(dartType.element)
+        .isNotEmpty) {
+      return '${_getSerializableClassName(dartType.element)} *';
+    } else {
+      throw InvalidGenerationSourceError('Generator cannot target `$dartType`.',
+          todo: 'Apply the ChannelSerializable annotation on `$dartType`.',
+          element: field);
     }
-    _channelSerializableChecker.anno
-    field.
-    return 'id';
+  }
+
+  String _getSerializableClassName(Element element) {
+    return '$kClassPrefix${element.name}';
   }
 }
