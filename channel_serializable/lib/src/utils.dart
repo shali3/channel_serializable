@@ -9,13 +9,13 @@ import 'package:channel_annotation/channel_annotation.dart';
 import 'package:meta/meta.dart' show alwaysThrows;
 import 'package:source_gen/source_gen.dart';
 
-final _jsonKeyChecker = const TypeChecker.fromRuntime(ChannelKey);
+final _channelKeyChecker = const TypeChecker.fromRuntime(ChannelKey);
 
 DartObject channelKeyAnnotation(FieldElement element) =>
-    _jsonKeyChecker.firstAnnotationOfExact(element) ??
+    _channelKeyChecker.firstAnnotationOfExact(element) ??
     (element.getter == null
         ? null
-        : _jsonKeyChecker.firstAnnotationOfExact(element.getter));
+        : _channelKeyChecker.firstAnnotationOfExact(element.getter));
 
 /// Returns `true` if [element] is annotated with [ChannelKey].
 bool hasChannelKeyAnnotation(FieldElement element) =>
