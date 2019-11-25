@@ -14,8 +14,10 @@ library channel_serializable.builder;
 
 import 'package:build/build.dart';
 import 'package:channel_annotation/channel_annotation.dart';
+import 'package:source_gen/source_gen.dart';
 
 import 'src/channel_part_builder.dart';
+import 'src/generators/obj_c_generator.dart';
 
 /// Supports `package:build_runner` creation and configuration of
 /// `channel_serializable`.
@@ -24,4 +26,32 @@ import 'src/channel_part_builder.dart';
 Builder channelSerializable(BuilderOptions options) {
   final config = const ChannelSerializable().withDefaults();
   return channelPartBuilder(config: config);
+}
+
+Builder copyBuilder([_]) => LibraryBuilder(
+      ObjCGenerator(),
+      generatedExtension: '.g.h',
+      formatOutput: (_) => _,
+    );
+
+/// A really simple [Builder], it just makes copies of .txt files!
+class CopyBuilder implements Builder {
+  @override
+  final buildExtensions = const {
+    '.dart': ['.g.h']
+  };
+
+  @override
+  Future<void> build(BuildStep buildStep) async {
+//    // Each `buildStep` has a single input.
+//    final inputId = buildStep.inputId;
+//
+//    // Create a new target `AssetId` based on the old one.
+//
+//    final copy = inputId.changeExtension('.g.h');
+//    final contents = await buildStep.readAsString(inputId);
+//
+//    // Write out the new asset.
+//    await buildStep.writeAsString(copy, contents);
+  }
 }

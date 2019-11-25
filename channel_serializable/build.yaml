@@ -61,3 +61,9 @@ builders:
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+  copy_builder:
+    import: "package:channel_serializable/builder.dart"
+    builder_factories: ["copyBuilder"]
+    build_extensions: {".dart": ["copy_builder.g.h"]}
+    auto_apply: root_package
+    build_to: source
