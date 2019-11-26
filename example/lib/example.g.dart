@@ -21,7 +21,10 @@ Person _$PersonFromMap(Map<String, dynamic> map) {
         ?.map(
             (e) => e == null ? null : Order.fromMap(e as Map<String, dynamic>))
         ?.toList(),
-  );
+  )..idToDate = (map['idToDate'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(
+          k, e == null ? null : DateTime.fromMicrosecondsSinceEpoch(e as int)),
+    );
 }
 
 Map<String, dynamic> _$PersonToMap(Person instance) => <String, dynamic>{
@@ -30,6 +33,8 @@ Map<String, dynamic> _$PersonToMap(Person instance) => <String, dynamic>{
       'lastName': instance.lastName,
       'dateOfBirth': instance.dateOfBirth?.microsecondsSinceEpoch,
       'lastOrder': instance.lastOrder?.microsecondsSinceEpoch,
+      'idToDate': instance.idToDate
+          ?.map((k, e) => MapEntry(k, e?.microsecondsSinceEpoch)),
       'orders': instance.orders?.map((e) => e.toMap())?.toList(),
     };
 

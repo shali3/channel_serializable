@@ -14,6 +14,7 @@
 @property(nonatomic) NSString *lastName;
 @property(nonatomic) NSDate *dateOfBirth;
 @property(nonatomic) NSDate *lastOrder;
+@property(nonatomic) NSDictionary<NSString *,NSDate *> *idToDate;
 @property(nonatomic) NSArray<CNLOrder *> *orders;
 @end
 

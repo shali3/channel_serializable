@@ -13,6 +13,7 @@ class Person {
   final String lastName;
   final DateTime dateOfBirth;
   final DateTime lastOrder;
+  Map<String, DateTime> idToDate;
   List<Order> orders;
 
   Person(this.firstName, this.lastName, this.dateOfBirth,
