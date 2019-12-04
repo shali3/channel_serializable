@@ -4,6 +4,8 @@
 // ObjCGenerator
 // **************************************************************************
 
+#import "example.g.h"
+
 @implementation CNLPerson
 
 - (instancetype) initWithChannelDict:(NSDictionary *)dict {
@@ -14,29 +16,60 @@
     self.lastName = dict[@"lastName"];
     self.dateOfBirth = [[NSDate alloc] initWithTimeIntervalSince1970:[dict[@"dateOfBirth"] longValue]/1000000.0];
     self.lastOrder = [[NSDate alloc] initWithTimeIntervalSince1970:[dict[@"lastOrder"] longValue]/1000000.0];
-    self.idToDate = [self build_idToDate_from:dict[@"idToDate"];
-    self.orders = [self build_orders_from:dict[@"orders"];
+    self.idToDate = [self deserialize_idToDate:dict[@"idToDate"]];
+    self.orders = [self deserialize_orders:dict[@"orders"]];
   }
   return self;
 
 }
 - (NSDictionary *) toChannelDict {
+  return @{
+    @"firstName": self.firstName,
+    @"middleName": self.middleName,
+    @"lastName": self.lastName,
+    @"dateOfBirth": @(self.dateOfBirth.timeIntervalSince1970*1000000),
+    @"lastOrder": @(self.lastOrder.timeIntervalSince1970*1000000),
+    @"idToDate": [self serialize_idToDate],
+    @"orders": [self serialize_orders]
+  };
 }
 
--(NSDictionary<NSString *,NSDate *> *) build_idToDate_from:(NSDictionary *)dict {
+-(NSDictionary<NSString *,NSDate *> *) deserialize_idToDate:(NSDictionary *)dict {
   NSMutableDictionary * retVal = [NSMutableDictionary new];
   for (id key in dict) {
     id deserializedKey = key;
     id deserializedVal = [[NSDate alloc] initWithTimeIntervalSince1970:[dict[key] longValue]/1000000.0];      
     retVal[deserializedKey] = deserializedVal;
   }
+  return retVal;
 }
--(NSArray<CNLOrder *> *) build_orders_from:(NSArray *)array {
+
+-(NSDictionary *) serialize_idToDate {
+  NSMutableDictionary * retVal = [NSMutableDictionary new];
+  for (id key in self.idToDate) {
+    id serializedKey = key;
+    id serializedVal = @(self.idToDate[key].timeIntervalSince1970*1000000);      
+    retVal[serializedKey] = serializedVal;
+  }
+  return retVal;
+}
+
+-(NSArray<CNLOrder *> *) deserialize_orders:(NSArray *)array {
   NSMutableArray * retVal = [NSMutableArray new];
   for (id item in array) {
-    [retVal addObject:[[CNLOrder alloc] initWithChannelDict:item];
+    [retVal addObject:[[CNLOrder alloc] initWithChannelDict:item]];
   }
+  return retVal;
 }
+
+-(NSArray *) serialize_orders {
+  NSMutableArray * retVal = [NSMutableArray new];
+  for (id item in self.orders) {
+    [retVal addObject:[item toChannelDict]];
+  }
+  return retVal;
+}
+
 @end
 
 @implementation CNLOrder
@@ -55,6 +88,14 @@
 
 }
 - (NSDictionary *) toChannelDict {
+  return @{
+    @"count": @(self.count),
+    @"itemNumber": @(self.itemNumber),
+    @"isRushed": @(self.isRushed),
+    @"item": [self.item toChannelDict],
+    @"prepTime": @(self.prepTime*1000000),
+    @"date": @(self.date.timeIntervalSince1970*1000000)
+  };
 }
 
 
@@ -73,6 +114,11 @@
 
 }
 - (NSDictionary *) toChannelDict {
+  return @{
+    @"count": @(self.count),
+    @"itemNumber": @(self.itemNumber),
+    @"isRushed": @(self.isRushed)
+  };
 }
 
 

@@ -4,6 +4,12 @@
 // ObjCGenerator
 // **************************************************************************
 
+@class CNLPerson;
+
+@class CNLOrder;
+
+@class CNLItem;
+
 @interface CNLPerson : NSObject
 
 - (instancetype) initWithChannelDict:(NSDictionary *)dict;
@@ -25,7 +31,7 @@
     
 @property(nonatomic) long count;
 @property(nonatomic) long itemNumber;
-@property(nonatomic) bool isRushed;
+@property(nonatomic) BOOL isRushed;
 @property(nonatomic) CNLItem *item;
 @property(nonatomic) NSTimeInterval prepTime;
 @property(nonatomic) NSDate *date;
@@ -38,5 +44,5 @@
     
 @property(nonatomic) long count;
 @property(nonatomic) long itemNumber;
-@property(nonatomic) bool isRushed;
+@property(nonatomic) BOOL isRushed;
 @end
